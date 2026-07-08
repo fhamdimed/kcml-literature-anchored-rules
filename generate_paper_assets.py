@@ -7,12 +7,14 @@ file by default.
 
 Default expected repository layout
 ----------------------------------
-kcml-repository/
+kcml-literature-anchored-rules/
 ├── generate_paper_assets.py
 ├── analysis_outputs/
 │   ├── common_threshold_robust/
 │   ├── repeated_cv/
 │   └── rule_ablations/
+├── data/
+│   └── cleaned_phenotype_cohort/
 └── paper/
     └── scripts/
         └── generate_common_threshold_assets.py
@@ -26,6 +28,7 @@ Run with default paths:
 Run with explicit paths:
 
     python generate_paper_assets.py \
+      --cleaned-data-root data/cleaned_phenotype_cohort \
       --robust-root analysis_outputs/common_threshold_robust \
       --cv-root analysis_outputs/repeated_cv \
       --ablation-root analysis_outputs/rule_ablations \
@@ -77,6 +80,8 @@ def _print_tree_hint(root: Path) -> None:
     print("  │   ├── common_threshold_robust/", file=sys.stderr)
     print("  │   ├── repeated_cv/", file=sys.stderr)
     print("  │   └── rule_ablations/", file=sys.stderr)
+    print("  ├── data/", file=sys.stderr)
+    print("  │   └── cleaned_phenotype_cohort/", file=sys.stderr)
     print("  └── paper/", file=sys.stderr)
     print("      └── scripts/", file=sys.stderr)
     print("          └── generate_common_threshold_assets.py", file=sys.stderr)
@@ -95,6 +100,14 @@ def parse_args() -> argparse.Namespace:
         help=(
             "Path to generate_common_threshold_assets.py. "
             "Default: paper/scripts/generate_common_threshold_assets.py"
+        ),
+    )
+    parser.add_argument(
+        "--cleaned-data-root",
+        default=None,
+        help=(
+            "Path to lean cleaned cohort outputs used to regenerate "
+            "table_cleaning.tex. Default: data/cleaned_phenotype_cohort"
         ),
     )
     parser.add_argument(
@@ -149,6 +162,11 @@ def main() -> int:
         root / "analysis_outputs" / "rule_ablations",
         root,
     )
+    cleaned_data_root = _as_abs(
+        args.cleaned_data_root,
+        root / "data" / "cleaned_phenotype_cohort",
+        root,
+    )
     output_root = _as_abs(
         args.output_root,
         root / "paper",
@@ -158,6 +176,7 @@ def main() -> int:
     print("Resolved paths:")
     print(f"  Repository root : {root}")
     print(f"  Asset script    : {asset_script}")
+    print(f"  Cleaned data    : {cleaned_data_root}")
     print(f"  Robust outputs  : {robust_root}")
     print(f"  CV outputs      : {cv_root}")
     print(f"  Ablation outputs: {ablation_root}")
@@ -165,6 +184,7 @@ def main() -> int:
 
     ok = True
     ok &= _check_file(asset_script, "asset-generation script")
+    ok &= _check_dir(cleaned_data_root, "cleaned cohort output directory")
     ok &= _check_dir(robust_root, "robust analysis output directory")
     ok &= _check_dir(cv_root, "repeated-CV output directory")
     ok &= _check_dir(ablation_root, "rule-ablation output directory")
@@ -175,8 +195,9 @@ def main() -> int:
             "\nFix one of the following:\n"
             "  1. Move the analysis outputs into analysis_outputs/ with the expected names;\n"
             "  2. Move generate_common_threshold_assets.py into paper/scripts/;\n"
-            "  3. Or pass explicit paths with --asset-script, --robust-root, "
-            "--cv-root, --ablation-root and --output-root.\n",
+            "  3. Run prepare_thalassemia_dataset.py to create data/cleaned_phenotype_cohort;\n"
+            "  4. Or pass explicit paths with --asset-script, --cleaned-data-root, "
+            "--robust-root, --cv-root, --ablation-root and --output-root.\n",
             file=sys.stderr,
         )
         return 2
@@ -186,6 +207,8 @@ def main() -> int:
     command = [
         sys.executable,
         str(asset_script),
+        "--cleaned-data-root",
+        str(cleaned_data_root),
         "--robust-root",
         str(robust_root),
         "--cv-root",

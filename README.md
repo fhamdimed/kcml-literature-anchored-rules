@@ -199,6 +199,7 @@ python scripts/generate_paper_assets.py
 This wrapper reads from:
 
 ```text
+data/cleaned_phenotype_cohort/
 analysis_outputs/common_threshold_robust/
 analysis_outputs/repeated_cv/
 analysis_outputs/rule_ablations/
@@ -216,6 +217,7 @@ The equivalent explicit command is:
 
 ```bash
 python paper/scripts/generate_common_threshold_assets.py \
+  --cleaned-data-root data/cleaned_phenotype_cohort \
   --robust-root analysis_outputs/common_threshold_robust \
   --cv-root analysis_outputs/repeated_cv \
   --ablation-root analysis_outputs/rule_ablations \

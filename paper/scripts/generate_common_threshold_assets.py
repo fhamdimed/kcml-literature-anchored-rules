@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import shutil
 from collections import Counter
@@ -322,7 +323,7 @@ def write_cv_effect_table(summary: pd.DataFrame, path: Path) -> None:
 
 def write_ablation_table(summary: pd.DataFrame, path: Path) -> None:
     lines = [
-        r"\begin{tabular}{lrrrrp{3.2cm}}",
+        r"\begin{tabular}{lccccp{3.5cm}}",
         r"\toprule",
         r"Algorithm & All-rule $\lambda$ & Penalized single rules & Penalized leave-outs & Penalized controls & Leave-outs yielding $\lambda=0$ \\",
         r"\midrule",
@@ -337,6 +338,132 @@ def write_ablation_table(summary: pd.DataFrame, path: Path) -> None:
         )
     lines += [r"\bottomrule", r"\end{tabular}", ""]
     path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def format_int(value: object) -> str:
+    if value is None or (isinstance(value, float) and np.isnan(value)):
+        return "--"
+    return f"{int(value):,}"
+    
+
+def read_manifest(path: Path) -> dict[str, object]:
+    if not path.exists():
+        return {}
+    with path.open("r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def write_cleaning_table(
+    cleaned_data_root: Path,
+    tables_dir: Path,
+    source_dir: Path,
+) -> None:
+    """Write the manuscript cleaning table.
+    It is generated from the repository-lean cleaned-data outputs:
+    thalassemia_model_matrix_clean.csv, cohort_flow.csv and
+    analysis_manifest.json.
+    """
+
+    cleaned_data_root = cleaned_data_root.resolve()
+    manifest_path = cleaned_data_root / "analysis_manifest.json"
+    cohort_flow_path = cleaned_data_root / "cohort_flow.csv"
+    model_matrix_path = cleaned_data_root / "thalassemia_model_matrix_clean.csv"
+
+    required = [manifest_path, cohort_flow_path, model_matrix_path]
+    missing = [path for path in required if not path.exists()]
+    if missing:
+        print(
+            "WARNING: table_cleaning.tex was not generated because the cleaned "
+            "cohort files were not found:",
+        )
+        for path in missing:
+            print(f"  missing: {path}")
+        print(
+            "Run prepare_thalassemia_dataset.py first, or pass "
+            "--cleaned-data-root explicitly."
+        )
+        return
+
+    manifest = read_manifest(manifest_path)
+    counts = manifest.get("counts", {})
+    if not isinstance(counts, dict):
+        counts = {}
+
+    model_df = pd.read_csv(model_matrix_path)
+
+    primary_predictors = ["MCV", "MCH", "HBA2", "HBF"]
+    missing_predictors = [
+        column for column in primary_predictors if column not in model_df.columns
+    ]
+    if missing_predictors:
+        raise ValueError(
+            "Cannot build table_cleaning.tex; missing predictor columns in "
+            f"{model_matrix_path}: {missing_predictors}"
+        )
+
+    retained_mask = ~model_df[primary_predictors].isna().all(axis=1)
+    retained_df = model_df.loc[retained_mask].copy()
+
+    rows = [
+        {
+            "Item": "Source phenotype cohort",
+            "Count": format_int(counts.get("source_rows", len(model_df))),
+        },
+        {
+            "Item": "Analytical cohort",
+            "Count": format_int(len(retained_df)),
+        },
+        {
+            "Item": "Blank HbF interpreted as zero",
+            "Count": format_int(counts.get("hbf_blank_interpreted_as_zero")),
+        },
+        {
+            "Item": "Unresolved HbF before all-missing exclusion",
+            "Count": format_int(counts.get("hbf_unresolved")),
+        },
+        {
+            "Item": "Fraction-sum anomaly flag",
+            "Count": format_int(counts.get("fraction_sum_anomalies")),
+        },
+        {
+            "Item": "Missing MCV in analytical cohort",
+            "Count": format_int(retained_df["MCV"].isna().sum()),
+        },
+        {
+            "Item": "Missing MCH in analytical cohort",
+            "Count": format_int(retained_df["MCH"].isna().sum()),
+        },
+        {
+            "Item": r"Missing HbA$_2$ in analytical cohort",
+            "Count": format_int(retained_df["HBA2"].isna().sum()),
+        },
+        {
+            "Item": "Missing HbF in analytical cohort",
+            "Count": format_int(retained_df["HBF"].isna().sum()),
+        },
+    ]
+
+    summary = pd.DataFrame(rows)
+    source_dir.mkdir(parents=True, exist_ok=True)
+    tables_dir.mkdir(parents=True, exist_ok=True)
+
+    summary.to_csv(source_dir / "table_cleaning_source.csv", index=False)
+    shutil.copy2(cohort_flow_path, source_dir / "cohort_flow.csv")
+    shutil.copy2(manifest_path, source_dir / "analysis_manifest.json")
+
+    lines = [
+        r"\begin{tabular}{lr}",
+        r"\toprule",
+        r"Item & Count \\",
+        r"\midrule",
+    ]
+    for row in rows:
+        lines.append(f"{row['Item']} & {row['Count']} \\\\")
+    lines += [r"\bottomrule", r"\end{tabular}", ""]
+    (tables_dir / "table_cleaning.tex").write_text(
+        "\n".join(lines),
+        encoding="utf-8",
+    )
 
 def style_axes(ax: plt.Axes) -> None:
     ax.grid(True, alpha=0.22)
@@ -490,6 +617,17 @@ def main() -> None:
     p.add_argument("--cv-root",type=Path,required=True)
     p.add_argument("--ablation-root",type=Path,required=True)
     p.add_argument("--output-root",type=Path,required=True)
+    p.add_argument(
+        "--cleaned-data-root",
+        type=Path,
+        help=(
+            "Directory containing thalassemia_model_matrix_clean.csv, "
+            "cohort_flow.csv and analysis_manifest.json. Default: "
+            "<repository-root>/data/cleaned_phenotype_cohort, inferred "
+            "from --output-root. Used to generate table_cleaning.tex."
+        ),
+        required=True
+    )
     args=p.parse_args()
     root=args.output_root.resolve(); figures=root/"figures"; tables=root/"tables"; source=root/"source_data"
     for d in (figures,tables,source): d.mkdir(parents=True,exist_ok=True)
@@ -530,6 +668,17 @@ def main() -> None:
     write_cv_table(cv_summary,tables/"table_repeated_cv_summary.tex")
     write_cv_effect_table(cv_summary,tables/"table_cv_penalized_effects.tex")
     write_ablation_table(ab_summary,tables/"table_ablation_summary.tex")
+
+    cleaned_data_root = (
+        args.cleaned_data_root.resolve()
+        if args.cleaned_data_root is not None
+        else (root.parent / "data" / "cleaned_phenotype_cohort").resolve()
+    )
+    write_cleaning_table(
+        cleaned_data_root=cleaned_data_root,
+        tables_dir=tables,
+        source_dir=source,
+    )
 
     figure_validation(audit,figures/"figure2_validation_tradeoff.pdf")
     figure_holdout(comp,figures/"figure3_holdout_performance.pdf")

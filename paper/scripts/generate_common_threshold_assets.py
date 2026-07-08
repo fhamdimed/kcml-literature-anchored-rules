@@ -490,11 +490,13 @@ def figure_validation(audit: pd.DataFrame, output: Path) -> None:
         ax.set_ylabel(ylabel)
         ax.set_title(f"({panel})", loc="left", fontweight="bold")
         style_axes(ax)
-    axes[0, 0].legend(frameon=False, ncol=2, fontsize=8)
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    fig.legend(handles, labels, frameon=False, ncol=4, fontsize=8,
+               loc='upper center', bbox_to_anchor=(0.5, 1.02))
+    
     fig.tight_layout()
     fig.savefig(output, bbox_inches="tight")
     plt.close(fig)
-
 
 def grouped_baseline_selected(ax: plt.Axes, comp: pd.DataFrame, base_col: str,
                               selected_col: str, ylabel: str, panel: str) -> None:
@@ -518,7 +520,9 @@ def figure_holdout(comp: pd.DataFrame, output: Path) -> None:
                               "patient_violation_rate_selected", "Binary violation rate", "c")
     grouped_baseline_selected(axes[1,1], comp, "soft_rule_violation_baseline",
                               "soft_rule_violation_selected", "Soft rule violation", "d")
-    axes[0,0].legend(frameon=False, ncol=2, fontsize=8)
+    handles, labels = axes[0,0].get_legend_handles_labels()
+    fig.legend(handles, labels, frameon=False, ncol=2, fontsize=8,
+               loc='upper center', bbox_to_anchor=(0.5, 1.02))
     fig.tight_layout()
     fig.savefig(output, bbox_inches="tight")
     plt.close(fig)
@@ -526,7 +530,8 @@ def figure_holdout(comp: pd.DataFrame, output: Path) -> None:
 
 def figure_operating_points(op: pd.DataFrame, output: Path) -> None:
     roles = ["primary_common", "secondary_per_lambda_optimized", "sensitivity_fixed"]
-    role_labels = ["Common", "Per-$\\lambda$ optimized", "Threshold 0.5"]
+    #role_labels = ["Common", "Per-$\\lambda$ optimized", "Threshold 0.5"]
+    role_labels = ["Common threshold", "Per-$\\lambda$ optimized threshold", "Fixed 0.5 threshold"]
     metrics = [
         ("balanced_accuracy", "Balanced accuracy"),
         ("recall_sensitivity", "Sensitivity / recall"),
@@ -545,7 +550,9 @@ def figure_operating_points(op: pd.DataFrame, output: Path) -> None:
         ax.set_ylabel(ylabel)
         ax.set_title(f"({panel})",loc="left",fontweight="bold")
         style_axes(ax)
-    axes[0,0].legend(frameon=False,ncol=3,fontsize=8)
+        handles, labels = axes[0,0].get_legend_handles_labels()
+    fig.legend(handles, labels, frameon=False, ncol=3, fontsize=8,
+               loc='upper center', bbox_to_anchor=(0.5, 1.02))
     fig.tight_layout()
     fig.savefig(output,bbox_inches="tight")
     plt.close(fig)
@@ -578,7 +585,8 @@ def figure_cv(selected: pd.DataFrame, output: Path) -> None:
     axes[1,1].set_ylabel("Number of outer folds")
     axes[1,1].set_ylim(0,10)
     axes[1,1].set_title("(d)",loc="left",fontweight="bold")
-    axes[1,1].legend(frameon=False,fontsize=8)
+    axes[1,1].legend(frameon=False, fontsize=8, ncol=3,
+                     loc='upper center', bbox_to_anchor=(0.5, 1.15))
     style_axes(axes[1,1])
     fig.tight_layout()
     fig.savefig(output,bbox_inches="tight")

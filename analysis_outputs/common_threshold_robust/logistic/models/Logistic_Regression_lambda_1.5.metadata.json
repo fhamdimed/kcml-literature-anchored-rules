@@ -1,0 +1,30 @@
+{
+  "algorithm": "logistic_regression",
+  "penalty_multiplier": 1.5,
+  "enabled_rules": null,
+  "rule_weights": {},
+  "rule_control": "none",
+  "l2_strength": 1.0,
+  "feature_names": [
+    "MCV",
+    "MCH",
+    "HBA2",
+    "HBF"
+  ],
+  "imputation_strategy": "training_median",
+  "imputer_statistics": [
+    64.8,
+    20.6,
+    5.3,
+    0.5
+  ],
+  "optimization": {
+    "success": true,
+    "status": 0,
+    "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+    "iterations": 7,
+    "function_evaluations": 9,
+    "final_objective": 0.8725362975271798,
+    "gradient_norm": 2.6590161062666115e-05
+  }
+}

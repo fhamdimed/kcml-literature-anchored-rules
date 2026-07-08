@@ -1,0 +1,21 @@
+{
+  "algorithm": "xgboost",
+  "penalty_multiplier": 0.75,
+  "enabled_rules": null,
+  "rule_weights": {},
+  "rule_control": "none",
+  "feature_names": [
+    "MCV",
+    "MCH",
+    "HBA2",
+    "HBF"
+  ],
+  "imputation_strategy": "training_median",
+  "imputer_statistics": [
+    64.8,
+    20.6,
+    5.3,
+    0.5
+  ],
+  "boosted_rounds": 111
+}

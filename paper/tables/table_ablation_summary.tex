@@ -1,0 +1,10 @@
+\begin{tabular}{lrrrrp{3.2cm}}
+\toprule
+Algorithm & All-rule $\lambda$ & Penalized single rules & Penalized leave-outs & Penalized controls & Leave-outs yielding $\lambda=0$ \\
+\midrule
+XGBoost & 0.1 & 5/5 & 4/5 & 0/3 & LR05 \\
+LightGBM & 0.1 & 4/5 & 3/5 & 0/3 & LR03, LR05 \\
+Logistic & 0 & 1/5 & 0/5 & 0/3 & LR01, LR02, LR03, LR04, LR05 \\
+Neural ensemble & 0 & 5/5 & 1/5 & 0/3 & LR01, LR03, LR04, LR05 \\
+\bottomrule
+\end{tabular}

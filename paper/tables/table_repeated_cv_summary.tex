@@ -1,0 +1,10 @@
+\begin{tabular}{lp{2.4cm}rrrrrr}
+\toprule
+Algorithm & Selected $\lambda$ frequency & Bal. acc. & Sens. & Spec. & ROC AUC & Binary $V$ & Soft $V$ \\
+\midrule
+XGBoost & 0: 6, 0.1: 4 & 0.723 $\pm$ 0.012 & 0.726 $\pm$ 0.042 & 0.720 $\pm$ 0.054 & 0.796 $\pm$ 0.010 & 0.032 $\pm$ 0.009 & 0.555 $\pm$ 0.035 \\
+LightGBM & 0: 5, 0.1: 5 & 0.726 $\pm$ 0.009 & 0.712 $\pm$ 0.040 & 0.740 $\pm$ 0.035 & 0.796 $\pm$ 0.010 & 0.031 $\pm$ 0.011 & 0.548 $\pm$ 0.035 \\
+Logistic & 0: 10 & 0.707 $\pm$ 0.008 & 0.720 $\pm$ 0.043 & 0.694 $\pm$ 0.050 & 0.759 $\pm$ 0.009 & 0.023 $\pm$ 0.004 & 0.735 $\pm$ 0.009 \\
+Neural ensemble & 0: 5, 0.1: 4, 0.25: 1 & 0.726 $\pm$ 0.009 & 0.714 $\pm$ 0.048 & 0.737 $\pm$ 0.044 & 0.797 $\pm$ 0.009 & 0.024 $\pm$ 0.005 & 0.544 $\pm$ 0.038 \\
+\bottomrule
+\end{tabular}

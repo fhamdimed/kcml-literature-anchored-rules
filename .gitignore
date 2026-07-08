@@ -1,0 +1,58 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.env
+.venv/
+venv/
+env/
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Jupyter (if any)
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Logs / temp
+# =========================
+*.log
+
+# =========================
+# Results & Figures (generated)
+# =========================
+results/*
+!results/.gitkeep
+
+figures/*
+!figures/.gitkeep
+
+# =========================
+# Data (optional)
+# =========================
+# data/*
+# !data/README.md
+
+# =========================
+# Streamlit (if used)
+# =========================
+.streamlit/secrets.toml

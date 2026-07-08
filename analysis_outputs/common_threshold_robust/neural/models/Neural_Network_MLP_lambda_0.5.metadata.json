@@ -1,0 +1,47 @@
+{
+  "algorithm": "neural_network_mlp",
+  "penalty_multiplier": 0.5,
+  "enabled_rules": null,
+  "rule_weights": {},
+  "rule_control": "none",
+  "feature_names": [
+    "MCV",
+    "MCH",
+    "HBA2",
+    "HBF"
+  ],
+  "imputation_strategy": "training_median",
+  "imputer_statistics": [
+    64.8,
+    20.6,
+    5.3,
+    0.5
+  ],
+  "restart_aggregation": "mean_probability",
+  "n_fitted_restarts": 3,
+  "restart_summary": [
+    {
+      "restart": 0,
+      "seed": 42,
+      "best_epoch": 155,
+      "best_validation_combined_loss": 0.4610215723514557
+    },
+    {
+      "restart": 1,
+      "seed": 43,
+      "best_epoch": 164,
+      "best_validation_combined_loss": 0.46352019906044006
+    },
+    {
+      "restart": 2,
+      "seed": 44,
+      "best_epoch": 61,
+      "best_validation_combined_loss": 0.465376079082489
+    }
+  ],
+  "lowest_loss_restart": 0,
+  "lowest_individual_validation_loss": 0.4610215723514557,
+  "ensemble_validation_loss": 0.46220529079437256,
+  "deterministic_algorithms": true,
+  "device_used": "cpu"
+}

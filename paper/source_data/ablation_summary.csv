@@ -1,0 +1,5 @@
+algorithm,all_rules_lambda,single_rule_penalized,leave_out_penalized,negative_control_penalized,leave_out_lr05_lambda,leave_out_lr05_delta_ba,leave_out_lr05_delta_ap,zero_penalty_leaveouts
+XGBoost,0.1,5,4,0,0.0,-0.00465223588605812,0.0013826117719199504,LR05
+LightGBM,0.1,4,3,0,0.0,-0.002356142563217478,0.002299260274463033,"LR03, LR05"
+Logistic Regression,0.0,1,0,0,0.0,0.0,0.0,"LR01, LR02, LR03, LR04, LR05"
+Neural Network (MLP),0.0,5,1,0,0.0,0.0,0.0,"LR01, LR03, LR04, LR05"

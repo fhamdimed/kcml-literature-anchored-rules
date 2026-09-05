@@ -1,0 +1,66 @@
+{
+  "analysis": "holdout calibration, paired bootstrap uncertainty, and hypothetical confirmatory-referral translation",
+  "results_dir": "analysis_outputs/common_threshold_robust",
+  "output_dir": "analysis_outputs/holdout_analysis",
+  "no_model_retraining": true,
+  "evaluation_mode": "baseline-derived common threshold",
+  "bootstrap": {
+    "method": "paired patient-level bootstrap stratified by true outcome class",
+    "replicates": 2000,
+    "base_seed": 20260905,
+    "confidence_interval": "percentile 95% interval",
+    "metrics": [
+      "balanced_accuracy",
+      "sensitivity",
+      "specificity",
+      "precision",
+      "f1",
+      "roc_auc",
+      "average_precision",
+      "brier_score",
+      "log_loss",
+      "binary_violation_rate",
+      "soft_rule_violation"
+    ]
+  },
+  "calibration": {
+    "intercept_slope": "logistic recalibration of clipped predicted log-odds using kcml.metrics.calibration_intercept_slope",
+    "curve_bins": 10,
+    "curve_binning": "fixed-width probability bins over [0,1]"
+  },
+  "confirmatory_referral_interpretation": "Hypothetical operating-point translation assuming every common-threshold predicted-positive classification is referred for molecular confirmation. This is not a clinical utility analysis or deployment recommendation.",
+  "algorithms": [
+    {
+      "algorithm": "XGBoost",
+      "algorithm_directory": "analysis_outputs/common_threshold_robust/xgboost",
+      "baseline_prediction_file": "analysis_outputs/common_threshold_robust/xgboost/predictions/XGBoost_lambda_0_test.csv",
+      "selected_prediction_file": "analysis_outputs/common_threshold_robust/xgboost/predictions/XGBoost_lambda_0.1_test.csv",
+      "selected_penalty_multiplier": 0.1,
+      "common_threshold": 0.176466839134463
+    },
+    {
+      "algorithm": "LightGBM",
+      "algorithm_directory": "analysis_outputs/common_threshold_robust/lightgbm",
+      "baseline_prediction_file": "analysis_outputs/common_threshold_robust/lightgbm/predictions/LightGBM_lambda_0_test.csv",
+      "selected_prediction_file": "analysis_outputs/common_threshold_robust/lightgbm/predictions/LightGBM_lambda_0.1_test.csv",
+      "selected_penalty_multiplier": 0.1,
+      "common_threshold": 0.1620460991482594
+    },
+    {
+      "algorithm": "Logistic Regression",
+      "algorithm_directory": "analysis_outputs/common_threshold_robust/logistic",
+      "baseline_prediction_file": "analysis_outputs/common_threshold_robust/logistic/predictions/Logistic_Regression_lambda_0_test.csv",
+      "selected_prediction_file": "analysis_outputs/common_threshold_robust/logistic/predictions/Logistic_Regression_lambda_0_test.csv",
+      "selected_penalty_multiplier": 0.0,
+      "common_threshold": 0.1407551180350323
+    },
+    {
+      "algorithm": "Neural Network (MLP)",
+      "algorithm_directory": "analysis_outputs/common_threshold_robust/neural",
+      "baseline_prediction_file": "analysis_outputs/common_threshold_robust/neural/predictions/Neural_Network_MLP_lambda_0_test.csv",
+      "selected_prediction_file": "analysis_outputs/common_threshold_robust/neural/predictions/Neural_Network_MLP_lambda_0_test.csv",
+      "selected_penalty_multiplier": 0.0,
+      "common_threshold": 0.118138941625754
+    }
+  ]
+}

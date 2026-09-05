@@ -11,6 +11,10 @@
   - `run_lightgbm.py`
   - `run_logistic_regression.py`
   - `run_neural_network.py`
+- `analyze_holdout_predictions.py` for secondary holdout calibration, paired bootstrap uncertainty and confirmatory-referral analyses.
+- Calibration summaries and calibration-curve outputs for selected and unpenalized models.
+- Paired patient-level bootstrap 95% intervals for primary holdout metrics and selected-minus-unpenalized differences.
+- Hypothetical confirmatory-referral summaries translating the common-threshold operating trade-off into referral counts.
 
 ## Fixed
 
@@ -32,3 +36,4 @@
 ## Notes
 
 The sensitivity analyses are secondary analyses added for robustness assessment. They do not redefine or replace the prespecified primary analysis. The standalone algorithm runners delegate model construction to the shared factories and do not introduce duplicate model implementations.
+The holdout analyses reuse the archived patient-level test predictions and do not retrain models. Confirmatory-referral results are an operating-point translation assuming that predicted-positive cases undergo molecular confirmation; they are not a clinical utility analysis or deployment recommendation.

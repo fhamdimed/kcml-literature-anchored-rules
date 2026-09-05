@@ -38,6 +38,7 @@ kcml-literature-anchored-rules/
 ├── run_repeated_cv.py
 ├── run_rule_ablations.py
 ├── run_sensitivity_analyses.py
+├── analyze_holdout_predictions.py
 ├── summarize_threshold_strategies.py
 ├── generate_paper_assets.py
 ├── SENSITIVITY_ANALYSES.md
@@ -93,6 +94,9 @@ kcml-literature-anchored-rules/
 
 - `run_sensitivity_analyses.py`  
   Runs secondary sensitivity analyses for governance safeguards and relative rule weights without altering the prespecified primary KCML analysis. Safeguard sensitivity re-selects from existing all-lambda results; rule-weight sensitivity refits models because rule weights enter the training objective.
+
+- `analyze_holdout_predictions.py`  
+  Reuses archived primary holdout predictions to generate calibration summaries and curves, paired bootstrap uncertainty intervals and a hypothetical confirmatory-referral translation. It does not retrain models.
 
 - `SENSITIVITY_ANALYSES.md`  
   Documents the sensitivity configurations, execution commands and generated outputs.
@@ -185,7 +189,7 @@ Then summarize the three operating-point strategies:
 
 ```bash
 python summarize_threshold_strategies.py \
-  --results-dir results/common_threshold_robust
+  --results-dir analysis_outputs/common_threshold_robust
 ```
 
 Important primary outputs include:
@@ -267,6 +271,30 @@ rule_weight_sensitivity_manifest.json
 ```
 
 See `SENSITIVITY_ANALYSES.md` for the complete definitions and interpretation notes.
+
+## Holdout calibration, uncertainty and referral analysis
+
+The archived patient-level primary holdout predictions can be reused without model retraining to assess calibration, paired bootstrap uncertainty and the operating-point implications for hypothetical molecular-confirmation referrals.
+
+```bash
+python analyze_holdout_predictions.py \
+  --results-dir analysis_outputs/common_threshold_robust \
+  --output analysis_outputs/holdout_analysis \
+  --bootstrap-replicates 2000 \
+  --calibration-bins 10
+```
+
+Main outputs include:
+
+```text
+calibration_summary.csv
+calibration_curves.csv
+bootstrap_metric_intervals.csv
+confirmatory_referral_summary.csv
+holdout_analysis_manifest.json
+```
+
+Bootstrap intervals use paired patient-level resampling stratified by true outcome class. The confirmatory-referral summary assumes that every common-threshold predicted-positive case would be referred for molecular confirmation and should be interpreted as an operating-point translation rather than a clinical utility analysis or deployment recommendation.
 
 ## Generating manuscript figures and tables
 
@@ -362,10 +390,10 @@ python run_all_algorithms.py \
   --seed 42
 
 python summarize_threshold_strategies.py \
-  --results-dir results/common_threshold_robust
+  --results-dir analysis_outputs/common_threshold_robust
 ```
 
-Then run the repeated-CV and ablation commands in `M1_EXECUTION_GUIDE.md`. The reviewer-requested governance and rule-weight sensitivity analyses can then be run with `run_sensitivity_analyses.py` as described above; they do not replace the primary analysis.
+Then run the repeated-CV and ablation commands in `M1_EXECUTION_GUIDE.md`. The secondary governance and rule-weight sensitivity analyses can then be run with `run_sensitivity_analyses.py` as described above; they do not replace the primary analysis.
 
 ## License
 

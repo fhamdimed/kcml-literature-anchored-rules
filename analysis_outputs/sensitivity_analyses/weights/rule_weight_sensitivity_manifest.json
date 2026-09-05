@@ -1,0 +1,59 @@
+{
+  "analysis": "reviewer rule-weight sensitivity",
+  "data": "data/cleaned_phenotype_cohort/thalassemia_model_matrix_clean.csv",
+  "algorithms": [
+    "xgboost",
+    "lightgbm",
+    "logistic",
+    "neural"
+  ],
+  "lambda_grid": [
+    0.0,
+    0.1,
+    0.25,
+    0.5,
+    0.75,
+    1.0,
+    1.5,
+    2.0
+  ],
+  "seed": 42,
+  "weight_schemes": {
+    "primary": {
+      "LR01": 1.0,
+      "LR02": 1.0,
+      "LR03": 1.0,
+      "LR04": 1.0,
+      "LR05": 1.5
+    },
+    "equal": {
+      "LR01": 1.0,
+      "LR02": 1.0,
+      "LR03": 1.0,
+      "LR04": 1.0,
+      "LR05": 1.0
+    },
+    "lr05_stronger": {
+      "LR01": 1.0,
+      "LR02": 1.0,
+      "LR03": 1.0,
+      "LR04": 1.0,
+      "LR05": 2.0
+    },
+    "lr02_lr04_downweighted": {
+      "LR01": 1.0,
+      "LR02": 0.5,
+      "LR03": 1.0,
+      "LR04": 0.5,
+      "LR05": 1.5
+    }
+  },
+  "primary_governance_policy": {
+    "balanced_accuracy_tolerance": 0.01,
+    "auc_tolerance": 0.01,
+    "average_precision_tolerance": 0.02,
+    "minimum_violation_reduction": 0.4,
+    "minimum_soft_violation_reduction": 0.0
+  },
+  "note": "Only relative rule weights change. Data split, model settings, lambda grid, and primary governance safeguards remain fixed."
+}

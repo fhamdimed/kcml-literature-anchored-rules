@@ -31,10 +31,17 @@ kcml-literature-anchored-rules/
 ├── docs/
 ├── prepare_thalassemia_dataset.py
 ├── run_all_algorithms.py
+├── run_xgboost.py
+├── run_lightgbm.py
+├── run_logistic_regression.py
+├── run_neural_network.py
 ├── run_repeated_cv.py
 ├── run_rule_ablations.py
+├── run_sensitivity_analyses.py
 ├── summarize_threshold_strategies.py
-└── generate_paper_assets.py
+├── generate_paper_assets.py
+├── SENSITIVITY_ANALYSES.md
+└── CHANGELOG.md
 ```
 
 ### Main source files
@@ -64,13 +71,31 @@ kcml-literature-anchored-rules/
   Neural-network adapter using independently early-stopped restarts and mean-probability ensembling.
 
 - `run_all_algorithms.py`  
-  Runs the primary robust experiment for all requested algorithms.
+  Runs the primary robust experiment for all requested algorithms. XGBoost, LightGBM and logistic regression are constructed directly through `kcml.factories`; the neural model is launched through `run_neural_network.py` in a fresh Python subprocess by default to preserve the isolated PyTorch execution used in the reported workflow.
+
+- `run_xgboost.py`  
+  Standalone XGBoost command-line runner. Model construction remains centralized in `kcml.factories.make_xgboost_factory`.
+
+- `run_lightgbm.py`  
+  Standalone LightGBM command-line runner. Model construction remains centralized in `kcml.factories.make_lightgbm_factory`.
+
+- `run_logistic_regression.py`  
+  Standalone logistic-regression command-line runner. Model construction remains centralized in `kcml.factories.make_logistic_factory`.
+
+- `run_neural_network.py`  
+  Standalone neural command-line runner and the isolated subprocess entry point used by `run_all_algorithms.py`. The neural implementation remains centralized in `kcml.factories.make_neural_factory` and `kcml/models/neural_model.py`.
 
 - `run_repeated_cv.py`  
   Runs repeated train/validation/test resampling with the same common-threshold governance.
 
 - `run_rule_ablations.py`  
   Runs all-rules, single-rule, leave-one-rule-out and corrupted-rule control experiments.
+
+- `run_sensitivity_analyses.py`  
+  Runs secondary sensitivity analyses for governance safeguards and relative rule weights without altering the prespecified primary KCML analysis. Safeguard sensitivity re-selects from existing all-lambda results; rule-weight sensitivity refits models because rule weights enter the training objective.
+
+- `SENSITIVITY_ANALYSES.md`  
+  Documents the sensitivity configurations, execution commands and generated outputs.
 
 - `summarize_threshold_strategies.py`  
   Generates compact comparison tables for common-threshold, per-penalty optimized-threshold and fixed-0.5 operating points.
@@ -141,7 +166,7 @@ After generating the cleaned model matrix, run:
 ```bash
 python run_all_algorithms.py \
   --data data/cleaned_phenotype_cohort/thalassemia_model_matrix_clean.csv \
-  --output results/common_threshold_robust \
+  --output analysis_outputs/common_threshold_robust \
   --algorithms xgboost lightgbm logistic neural \
   --lambdas 0 0.1 0.25 0.5 0.75 1 1.5 2 \
   --tree-rounds 500 \
@@ -166,10 +191,10 @@ python summarize_threshold_strategies.py \
 Important primary outputs include:
 
 ```text
-results/common_threshold_robust/combined_common_threshold_all_lambda_results.csv
-results/common_threshold_robust/combined_selected_test_results.csv
-results/common_threshold_robust/combined_selected_vs_unpenalized_common_threshold.csv
-results/common_threshold_robust/combined_selected_operating_point_comparison.csv
+analysis_outputs/common_threshold_robust/combined_common_threshold_all_lambda_results.csv
+analysis_outputs/common_threshold_robust/combined_selected_test_results.csv
+analysis_outputs/common_threshold_robust/combined_selected_vs_unpenalized_common_threshold.csv
+analysis_outputs/common_threshold_robust/combined_selected_operating_point_comparison.csv
 ```
 
 ## Repeated cross-validation and ablations
@@ -188,12 +213,67 @@ The final workflow includes:
 - common-threshold, per-penalty optimized-threshold and fixed-0.5 analyses;
 - threshold-free soft rule-discordance metrics.
 
+## Sensitivity analyses
+
+The revision analyses assess whether constraint selection depends on the investigator-defined governance safeguards or on one specific relative rule-weight configuration. They are secondary analyses and do not redefine the prespecified primary analysis.
+
+### Governance-safeguard sensitivity
+
+This analysis reuses the existing all-lambda results and therefore does not retrain models. Each governance criterion is varied one at a time around the primary setting.
+
+```bash
+python run_sensitivity_analyses.py safeguards \
+  --primary-results-dir analysis_outputs/common_threshold_robust \
+  --cv-root analysis_outputs/repeated_cv \
+  --output analysis_outputs/sensitivity_analyses/safeguards
+```
+
+Main outputs include:
+
+```text
+safeguard_sensitivity_holdout.csv
+safeguard_sensitivity_cv_folds.csv
+safeguard_sensitivity_cv_selection_frequency.csv
+safeguard_sensitivity_manifest.json
+```
+
+### Relative rule-weight sensitivity
+
+This analysis refits the models because rule weights enter the training objective. The tested schemes include the primary weights, equal weights, stronger LR05 weighting and reduced relative influence of LR02 and LR04. Alternative weights are sensitivity perturbations rather than estimated clinical confidence values.
+
+```bash
+python run_sensitivity_analyses.py weights \
+  --data data/cleaned_phenotype_cohort/thalassemia_model_matrix_clean.csv \
+  --output analysis_outputs/sensitivity_analyses/weights \
+  --algorithms xgboost lightgbm logistic neural \
+  --schemes primary equal lr05_stronger lr02_lr04_downweighted \
+  --lambdas 0 0.1 0.25 0.5 0.75 1 1.5 2 \
+  --tree-rounds 500 \
+  --tree-learning-rate 0.05 \
+  --tree-early-stopping 50 \
+  --nn-max-epochs 300 \
+  --nn-patience 30 \
+  --nn-restarts 3 \
+  --nn-device cpu \
+  --seed 42
+```
+
+Main outputs include:
+
+```text
+rule_weight_sensitivity_selected_test.csv
+rule_weight_sensitivity_deltas.csv
+rule_weight_sensitivity_manifest.json
+```
+
+See `SENSITIVITY_ANALYSES.md` for the complete definitions and interpretation notes.
+
 ## Generating manuscript figures and tables
 
 To regenerate tables and figures from the archived CSV outputs using the repository-default paths:
 
 ```bash
-python scripts/generate_paper_assets.py
+python generate_paper_assets.py
 ```
 
 This wrapper reads from:
@@ -246,7 +326,7 @@ The primary analysis learns the decision threshold from the unpenalized validati
 
 ### 2. Neural-network repeatability
 
-The neural model uses three independently early-stopped restarts and averages predicted probabilities across restarts. All reported neural runs used CPU execution.
+The neural model uses three independently early-stopped restarts and averages predicted probabilities across restarts. All reported neural runs used CPU execution. By default, `run_all_algorithms.py` launches `run_neural_network.py` in a fresh Python subprocess, while the underlying neural implementation remains centralized in `kcml.factories` and `kcml/models/neural_model.py`.
 
 ### 3. Source workbook
 
@@ -254,7 +334,7 @@ The source workbook should be downloaded from the public cohort publication. Thi
 
 ### 4. Derived outputs
 
-The `analysis_outputs/` directory contains machine-readable CSV files used to support the reported tables and figures. Large model binaries are intentionally not required for paper reproduction.
+The `analysis_outputs/` directory contains machine-readable CSV files used to support the reported tables, figures and secondary sensitivity analyses. Large model binaries are intentionally not required for paper reproduction.
 
 ## Suggested execution order
 
@@ -267,7 +347,7 @@ python prepare_thalassemia_dataset.py \
 
 python run_all_algorithms.py \
   --data data/cleaned_phenotype_cohort/thalassemia_model_matrix_clean.csv \
-  --output results/common_threshold_robust \
+  --output analysis_outputs/common_threshold_robust \
   --algorithms xgboost lightgbm logistic neural \
   --lambdas 0 0.1 0.25 0.5 0.75 1 1.5 2 \
   --tree-rounds 500 \
@@ -285,7 +365,7 @@ python summarize_threshold_strategies.py \
   --results-dir results/common_threshold_robust
 ```
 
-Then run the repeated-CV and ablation commands in `M1_EXECUTION_GUIDE.md`.
+Then run the repeated-CV and ablation commands in `M1_EXECUTION_GUIDE.md`. The reviewer-requested governance and rule-weight sensitivity analyses can then be run with `run_sensitivity_analyses.py` as described above; they do not replace the primary analysis.
 
 ## License
 

@@ -1,0 +1,78 @@
+algorithm_key,algorithm,scenario,selected_lambda,n_folds
+lightgbm,LightGBM,ap_permissive_0.030,0.0,3
+lightgbm,LightGBM,ap_permissive_0.030,0.1,5
+lightgbm,LightGBM,ap_permissive_0.030,0.25,1
+lightgbm,LightGBM,ap_permissive_0.030,0.5,1
+lightgbm,LightGBM,ap_strict_0.010,0.0,7
+lightgbm,LightGBM,ap_strict_0.010,0.1,3
+lightgbm,LightGBM,auc_permissive_0.020,0.0,5
+lightgbm,LightGBM,auc_permissive_0.020,0.1,5
+lightgbm,LightGBM,auc_strict_0.005,0.0,5
+lightgbm,LightGBM,auc_strict_0.005,0.1,5
+lightgbm,LightGBM,ba_permissive_0.020,0.0,1
+lightgbm,LightGBM,ba_permissive_0.020,0.1,9
+lightgbm,LightGBM,ba_strict_0.005,0.0,7
+lightgbm,LightGBM,ba_strict_0.005,0.1,2
+lightgbm,LightGBM,ba_strict_0.005,0.25,1
+lightgbm,LightGBM,primary,0.0,5
+lightgbm,LightGBM,primary,0.1,5
+lightgbm,LightGBM,violation_permissive_0.30,0.0,5
+lightgbm,LightGBM,violation_permissive_0.30,0.1,5
+lightgbm,LightGBM,violation_strict_0.50,0.0,6
+lightgbm,LightGBM,violation_strict_0.50,0.1,4
+logistic,Logistic Regression,ap_permissive_0.030,0.0,10
+logistic,Logistic Regression,ap_strict_0.010,0.0,10
+logistic,Logistic Regression,auc_permissive_0.020,0.0,10
+logistic,Logistic Regression,auc_strict_0.005,0.0,10
+logistic,Logistic Regression,ba_permissive_0.020,0.0,10
+logistic,Logistic Regression,ba_strict_0.005,0.0,10
+logistic,Logistic Regression,primary,0.0,10
+logistic,Logistic Regression,violation_permissive_0.30,0.0,10
+logistic,Logistic Regression,violation_strict_0.50,0.0,10
+neural,Neural Network (MLP),ap_permissive_0.030,0.0,4
+neural,Neural Network (MLP),ap_permissive_0.030,0.1,4
+neural,Neural Network (MLP),ap_permissive_0.030,0.25,2
+neural,Neural Network (MLP),ap_strict_0.010,0.0,5
+neural,Neural Network (MLP),ap_strict_0.010,0.1,4
+neural,Neural Network (MLP),ap_strict_0.010,0.25,1
+neural,Neural Network (MLP),auc_permissive_0.020,0.0,5
+neural,Neural Network (MLP),auc_permissive_0.020,0.1,4
+neural,Neural Network (MLP),auc_permissive_0.020,0.25,1
+neural,Neural Network (MLP),auc_strict_0.005,0.0,5
+neural,Neural Network (MLP),auc_strict_0.005,0.1,4
+neural,Neural Network (MLP),auc_strict_0.005,0.25,1
+neural,Neural Network (MLP),ba_permissive_0.020,0.0,4
+neural,Neural Network (MLP),ba_permissive_0.020,0.1,5
+neural,Neural Network (MLP),ba_permissive_0.020,0.25,1
+neural,Neural Network (MLP),ba_strict_0.005,0.0,7
+neural,Neural Network (MLP),ba_strict_0.005,0.1,2
+neural,Neural Network (MLP),ba_strict_0.005,0.25,1
+neural,Neural Network (MLP),primary,0.0,5
+neural,Neural Network (MLP),primary,0.1,4
+neural,Neural Network (MLP),primary,0.25,1
+neural,Neural Network (MLP),violation_permissive_0.30,0.0,4
+neural,Neural Network (MLP),violation_permissive_0.30,0.1,5
+neural,Neural Network (MLP),violation_permissive_0.30,0.25,1
+neural,Neural Network (MLP),violation_strict_0.50,0.0,7
+neural,Neural Network (MLP),violation_strict_0.50,0.1,2
+neural,Neural Network (MLP),violation_strict_0.50,0.25,1
+xgboost,XGBoost,ap_permissive_0.030,0.0,6
+xgboost,XGBoost,ap_permissive_0.030,0.1,4
+xgboost,XGBoost,ap_strict_0.010,0.0,7
+xgboost,XGBoost,ap_strict_0.010,0.1,3
+xgboost,XGBoost,auc_permissive_0.020,0.0,6
+xgboost,XGBoost,auc_permissive_0.020,0.1,4
+xgboost,XGBoost,auc_strict_0.005,0.0,6
+xgboost,XGBoost,auc_strict_0.005,0.1,4
+xgboost,XGBoost,ba_permissive_0.020,0.0,1
+xgboost,XGBoost,ba_permissive_0.020,0.1,8
+xgboost,XGBoost,ba_permissive_0.020,0.25,1
+xgboost,XGBoost,ba_strict_0.005,0.0,7
+xgboost,XGBoost,ba_strict_0.005,0.1,3
+xgboost,XGBoost,primary,0.0,6
+xgboost,XGBoost,primary,0.1,4
+xgboost,XGBoost,violation_permissive_0.30,0.0,6
+xgboost,XGBoost,violation_permissive_0.30,0.1,4
+xgboost,XGBoost,violation_strict_0.50,0.0,6
+xgboost,XGBoost,violation_strict_0.50,0.1,3
+xgboost,XGBoost,violation_strict_0.50,0.25,1

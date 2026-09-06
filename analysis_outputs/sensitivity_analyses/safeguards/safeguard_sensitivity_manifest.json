@@ -1,0 +1,87 @@
+{
+  "analysis": "reviewer safeguard sensitivity",
+  "primary_results_dir": "analysis_outputs/common_threshold_robust",
+  "cv_root": "analysis_outputs/repeated_cv",
+  "primary_policy": {
+    "balanced_accuracy_tolerance": 0.01,
+    "auc_tolerance": 0.01,
+    "average_precision_tolerance": 0.02,
+    "minimum_violation_reduction": 0.4,
+    "minimum_soft_violation_reduction": 0.0
+  },
+  "scenarios": [
+    {
+      "name": "primary",
+      "balanced_accuracy_tolerance": 0.01,
+      "auc_tolerance": 0.01,
+      "average_precision_tolerance": 0.02,
+      "minimum_violation_reduction": 0.4,
+      "minimum_soft_violation_reduction": 0.0
+    },
+    {
+      "name": "ba_strict_0.005",
+      "balanced_accuracy_tolerance": 0.005,
+      "auc_tolerance": 0.01,
+      "average_precision_tolerance": 0.02,
+      "minimum_violation_reduction": 0.4,
+      "minimum_soft_violation_reduction": 0.0
+    },
+    {
+      "name": "ba_permissive_0.020",
+      "balanced_accuracy_tolerance": 0.02,
+      "auc_tolerance": 0.01,
+      "average_precision_tolerance": 0.02,
+      "minimum_violation_reduction": 0.4,
+      "minimum_soft_violation_reduction": 0.0
+    },
+    {
+      "name": "auc_strict_0.005",
+      "balanced_accuracy_tolerance": 0.01,
+      "auc_tolerance": 0.005,
+      "average_precision_tolerance": 0.02,
+      "minimum_violation_reduction": 0.4,
+      "minimum_soft_violation_reduction": 0.0
+    },
+    {
+      "name": "auc_permissive_0.020",
+      "balanced_accuracy_tolerance": 0.01,
+      "auc_tolerance": 0.02,
+      "average_precision_tolerance": 0.02,
+      "minimum_violation_reduction": 0.4,
+      "minimum_soft_violation_reduction": 0.0
+    },
+    {
+      "name": "ap_strict_0.010",
+      "balanced_accuracy_tolerance": 0.01,
+      "auc_tolerance": 0.01,
+      "average_precision_tolerance": 0.01,
+      "minimum_violation_reduction": 0.4,
+      "minimum_soft_violation_reduction": 0.0
+    },
+    {
+      "name": "ap_permissive_0.030",
+      "balanced_accuracy_tolerance": 0.01,
+      "auc_tolerance": 0.01,
+      "average_precision_tolerance": 0.03,
+      "minimum_violation_reduction": 0.4,
+      "minimum_soft_violation_reduction": 0.0
+    },
+    {
+      "name": "violation_strict_0.50",
+      "balanced_accuracy_tolerance": 0.01,
+      "auc_tolerance": 0.01,
+      "average_precision_tolerance": 0.02,
+      "minimum_violation_reduction": 0.5,
+      "minimum_soft_violation_reduction": 0.0
+    },
+    {
+      "name": "violation_permissive_0.30",
+      "balanced_accuracy_tolerance": 0.01,
+      "auc_tolerance": 0.01,
+      "average_precision_tolerance": 0.02,
+      "minimum_violation_reduction": 0.3,
+      "minimum_soft_violation_reduction": 0.0
+    }
+  ],
+  "note": "Each sensitivity scenario changes one governance criterion at a time; the underlying trained models and predictions are unchanged."
+}

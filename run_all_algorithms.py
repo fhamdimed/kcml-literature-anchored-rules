@@ -206,8 +206,8 @@ def main() -> None:
     parser.add_argument("--tree-early-stopping", type=int, default=50)
     parser.add_argument("--l2-strength", type=float, default=1.0)
     parser.add_argument("--nn-hidden-sizes", nargs="+", type=int, default=[32, 16])
-    parser.add_argument("--nn-max-epochs", type=int, default=500)
-    parser.add_argument("--nn-patience", type=int, default=50)
+    parser.add_argument("--nn-max-epochs", type=int, default=300)
+    parser.add_argument("--nn-patience", type=int, default=30)
     parser.add_argument("--nn-restarts", type=int, default=3)
     parser.add_argument("--nn-device", default="cpu")
     parser.add_argument(

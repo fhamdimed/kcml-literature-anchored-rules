@@ -2,7 +2,7 @@
 
 This repository contains the code, rule definitions, processing workflow and machine-readable outputs used to reproduce the results and figures for the paper:
 
-**Knowledge-Constrained Machine Learning: Translating Literature-Derived Rules into Governed Model Training for Thalassemia Screening**
+**Knowledge-Constrained Machine Learning for Governed Integration of Literature-Derived Rules in Thalassemia Genotype Classification**
 
 The repository implements an algorithm-agnostic framework that integrates literature-anchored phenotype rules into supervised machine-learning training by combining:
 
